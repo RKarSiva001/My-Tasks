@@ -35,7 +35,7 @@ const tagsList = [
 class MyTasks extends Component {
   state = {
     taskInput: '',
-    selectedTag: tagsList[0].displayText,
+    selectedTag: tagsList[0].optionId,
     activeId: tagsList[0].optionId,
     tasksList: [],
   }
@@ -65,22 +65,23 @@ class MyTasks extends Component {
     this.setState(prevState => ({
       tasksList: [...prevState.tasksList, newTask],
       taskInput: '',
-      selectedTag: tagsList[0].optionId,
+      selectedTag: tagsList[0].displayText,
     }))
   }
 
-  getActiveTasks = tasksList => {
-    const {activeId} = this.state
+  getActiveTasks = () => {
+    const {activeId, tasksList} = this.state
+    console.log(activeId)
     const filteredTasks = tasksList.filter(
       eachTasks => eachTasks.optionId === activeId,
     )
-    console.log(filteredTasks)
+    // console.log(filteredTasks)
     return filteredTasks
   }
 
   render() {
-    const {taskInput, selectedTag, tasksList} = this.state
-    const filteredTasks = this.getActiveTasks(tasksList)
+    const {activeId, taskInput, selectedTag, tasksList} = this.state
+    const filteredTasks = this.getActiveTasks()
 
     return (
       <div className="app-container">
@@ -90,6 +91,7 @@ class MyTasks extends Component {
             <label htmlFor="title" className="label">
               Task
             </label>
+            <br />
             <input
               type="text"
               id="title"
@@ -98,9 +100,11 @@ class MyTasks extends Component {
               className="input"
               placeholder="Enter the task here"
             />
+            <br />
             <label htmlFor="tag" className="label">
               Tags
             </label>
+            <br />
             <select onChange={this.onChangeTag} value={selectedTag} id="tag">
               {tagsList.map(eachTag => (
                 <option key={eachTag.optionId} value={eachTag.optionId}>
@@ -108,8 +112,9 @@ class MyTasks extends Component {
                 </option>
               ))}
             </select>
+            <br />
             <button type="submit" className="add-button">
-              Add
+              Add Task
             </button>
           </form>
         </div>
@@ -121,12 +126,13 @@ class MyTasks extends Component {
                 key={tabDetails.optionId}
                 tabDetails={tabDetails}
                 setActiveId={this.setActiveId}
+                isActive={activeId === tabDetails.optionId}
               />
             ))}
           </ul>
           <h1>Tasks</h1>
           <ul>
-            {tasksList.map(taskDetails => (
+            {filteredTasks.map(taskDetails => (
               <TaskItem key={taskDetails.id} taskDetails={taskDetails} />
             ))}
           </ul>
