@@ -36,13 +36,19 @@ class MyTasks extends Component {
   state = {
     taskInput: '',
     selectedTag: tagsList[0].optionId,
-    activeId: tagsList[0].optionId,
+    activeId: '',
     tasksList: [],
   }
 
-  setActiveId = optionId => {
-    this.setState({activeId: optionId})
+  onToggleActiveId = optionId => {
+    this.setState({
+      activeId: optionId,
+    })
   }
+
+  //   setActiveId = optionId => {
+  //     this.setState({activeId: optionId})
+  //   }
 
   onChangeTaskInput = event => {
     this.setState({taskInput: event.target.value})
@@ -54,33 +60,37 @@ class MyTasks extends Component {
 
   addTask = event => {
     event.preventDefault()
-    const {taskInput, selectedTag} = this.state
+    const {taskInput, selectedTag, selectedCategory} = this.state
 
     const newTask = {
       id: v4(),
       task: taskInput,
       tag: selectedTag,
+      category: selectedCategory,
     }
 
     this.setState(prevState => ({
       tasksList: [...prevState.tasksList, newTask],
       taskInput: '',
-      selectedTag: tagsList[0].displayText,
+      selectedTag: tagsList[0].optionId,
     }))
   }
 
   getActiveTasks = () => {
     const {activeId, tasksList} = this.state
-    console.log(activeId)
+
+    if (activeId === '') {
+      const filteredTasks = tasksList
+      return filteredTasks
+    }
     const filteredTasks = tasksList.filter(
-      eachTasks => eachTasks.optionId === activeId,
+      eachTasks => eachTasks.tag === activeId,
     )
-    // console.log(filteredTasks)
     return filteredTasks
   }
 
   render() {
-    const {activeId, taskInput, selectedTag, tasksList} = this.state
+    const {activeId, taskInput, selectedTag} = this.state
     const filteredTasks = this.getActiveTasks()
 
     return (
@@ -125,16 +135,20 @@ class MyTasks extends Component {
               <TabItem
                 key={tabDetails.optionId}
                 tabDetails={tabDetails}
-                setActiveId={this.setActiveId}
+                onToggleActiveId={this.onToggleActiveId}
                 isActive={activeId === tabDetails.optionId}
               />
             ))}
           </ul>
           <h1>Tasks</h1>
           <ul>
-            {filteredTasks.map(taskDetails => (
-              <TaskItem key={taskDetails.id} taskDetails={taskDetails} />
-            ))}
+            {filteredTasks.length > 0 ? (
+              filteredTasks.map(taskDetails => (
+                <TaskItem key={taskDetails.id} taskDetails={taskDetails} />
+              ))
+            ) : (
+              <p>No Tasks Added Yet</p>
+            )}
           </ul>
         </div>
       </div>

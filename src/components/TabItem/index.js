@@ -2,11 +2,11 @@
 import './index.css'
 
 const TabItem = props => {
-  const {tabDetails, setActiveId, isActive} = props
+  const {tabDetails, onToggleActiveId, isActive} = props
   const {optionId, displayText} = tabDetails
 
   const onClickTab = () => {
-    setActiveId(optionId)
+    onToggleActiveId(optionId)
   }
 
   const tabBtnClassName = isActive ? 'tab-button active' : 'tab-button'
